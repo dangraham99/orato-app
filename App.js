@@ -1,20 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import ChatPage from './pages/ChatPage';
 
 export default function App() {
+
+  var styles = StyleSheet.create({
+
+    app: {
+      backgroundColor: '#f5f5f5',
+      height: '100%'
+    },
+
+  })
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <SafeAreaView style={styles.app}>
+      <ChatPage />
       <StatusBar style="auto" />
-    </View>
+    </SafeAreaView >
   );
+
+
+
+
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+
