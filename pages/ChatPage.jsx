@@ -1,6 +1,6 @@
-import { View, StyleSheet, Text, TextInput } from 'react-native'
-import React from 'react'
-import Chatbox from '../components/Chatbox';
+import { View, StyleSheet, Text, TextInput, Alert } from 'react-native'
+import React, { useState } from 'react'
+import ChatHistory from '../components/ChatHistory';
 
 const ChatPage = () => {
 
@@ -40,6 +40,25 @@ const ChatPage = () => {
         }
     });
 
+
+    const handleChatSubmit = () => {
+        tempMessagesArr = messages
+        tempMessagesArr.push({
+            user: true,
+            text: userInput
+        })
+
+        setMessages(tempMessagesArr)
+    }
+
+
+    const [messages, setMessages] = useState([
+        { user: false, text: "I'm Orato, your personal language tutor. Let's get started" }
+    ])
+
+    const [userInput, setUserInput] = useState('')
+
+
     return (
         <View style={styles.container}>
             <View style={styles.hero}>
@@ -48,13 +67,11 @@ const ChatPage = () => {
             </View>
 
             <View>
-                <Chatbox user={false} text={"I'm Orato, your personal language tutor. Let's get started"} />
-
-                <Chatbox user={true} text={"Okay - what's next?"} />
+                <ChatHistory messages={messages} />
             </View>
 
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <TextInput style={styles.chatInput} />
+                <TextInput onChangeText={(text) => setUserInput(text)} onEndEditing={() => { handleChatSubmit() }} style={styles.chatInput} />
             </View>
 
         </View>
