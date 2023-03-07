@@ -1,5 +1,5 @@
-import { View, StyleSheet, Text, TextInput, Alert } from 'react-native'
-import React, { useState } from 'react'
+import { View, StyleSheet, Text, TextInput, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native'
+import React, { useState, useRef } from 'react'
 import ChatHistory from '../components/ChatHistory';
 
 const ChatPage = () => {
@@ -7,7 +7,8 @@ const ChatPage = () => {
     var styles = StyleSheet.create({
         container: {
             margin: 20,
-            flex: 1
+            flex: 1,
+            height: '100%'
         },
 
         hero: {
@@ -34,7 +35,7 @@ const ChatPage = () => {
             shadowColor: '#d4d4d4',
             borderRadius: 25,
             height: 40,
-            margin: 12,
+            marginVertical: 12,
             padding: 10,
             backgroundColor: '#f8fafc'
         }
@@ -42,13 +43,14 @@ const ChatPage = () => {
 
 
     const handleChatSubmit = () => {
-        tempMessagesArr = messages
-        tempMessagesArr.push({
+
+        setMessages([...messages, {
             user: true,
             text: userInput
-        })
+        }])
 
-        setMessages(tempMessagesArr)
+        setUserInput('')
+
     }
 
 
@@ -59,22 +61,29 @@ const ChatPage = () => {
     const [userInput, setUserInput] = useState('')
 
 
+
     return (
-        <View style={styles.container}>
-            <View style={styles.hero}>
-                <Text style={styles.titleText}>Meet Orato.</Text>
-                <Text style={styles.subtitleText}>A languages tutor powered by AI, built for you.</Text>
+        <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss() }}>
+            <View style={styles.container} >
+
+
+                <View style={styles.hero}>
+                    <Text style={styles.titleText}>Meet Orato.</Text>
+                    <Text style={styles.subtitleText}>A languages tutor powered by AI, built for you.</Text>
+                </View>
+                <View>
+                    <ChatHistory messages={messages} />
+                </View>
+                <KeyboardAvoidingView keyboardVerticalOffset={82} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, justifyContent: 'flex-end' }}>
+                    <TextInput value={userInput} enablesReturnKeyAutomatically enterKeyHint={'send'} onChangeText={text => setUserInput(text)} onSubmitEditing={() => { handleChatSubmit() }} style={styles.chatInput} />
+                </KeyboardAvoidingView>
+
+
+
+
             </View>
 
-            <View>
-                <ChatHistory messages={messages} />
-            </View>
-
-            <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <TextInput onChangeText={(text) => setUserInput(text)} onEndEditing={() => { handleChatSubmit() }} style={styles.chatInput} />
-            </View>
-
-        </View>
+        </TouchableWithoutFeedback>
     )
 }
 
