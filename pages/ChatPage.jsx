@@ -1,8 +1,9 @@
 import { View, StyleSheet, Text, TextInput, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import ChatHistory from '../components/ChatHistory';
+import { getResponse } from '../helpers/openai-api';
 
-const ChatPage = () => {
+const ChatPage = (props) => {
 
     var styles = StyleSheet.create({
         container: {
@@ -45,22 +46,31 @@ const ChatPage = () => {
     const handleChatSubmit = () => {
 
         setMessages([...messages, {
-            user: true,
-            text: userInput
+            role: 'user',
+            content: userInput
         }])
 
         setUserInput('')
+
+        props.submitPrompt(userInput)
 
     }
 
 
     const [messages, setMessages] = useState([
-        { user: false, text: "I'm Orato, your personal language tutor. Let's get started" }
+        { role: 'assistant', content: "I'm Orato, your personal language tutor. Let's get started" }
     ])
 
     const [userInput, setUserInput] = useState('')
 
+    useEffect(() => {
 
+        setMessages([...messages, {
+            role: 'assistant',
+            content: aiResponse
+        }])
+
+    }, [aiResponse])
 
     return (
         <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss() }}>

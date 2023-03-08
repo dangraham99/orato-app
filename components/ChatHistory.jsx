@@ -6,7 +6,7 @@ const ChatHistory = (props) => {
     return (
         <View>
             {props.messages.map((message, i) => {
-                return <Chatbox key={i} user={message.user} text={message.text} />
+                return <Chatbox key={i} user={message.role == 'user'} text={message.content} />
             })}
         </View>
     )
