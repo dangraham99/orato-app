@@ -1,9 +1,19 @@
 import { View, StyleSheet, Text, TextInput, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
 import ChatHistory from '../components/ChatHistory';
-import { getResponse } from '../helpers/openai-api';
+import { REACT_APP_OPENAI_API_KEY } from "../secrets";
+import { Configuration, OpenAIApi } from 'openai'
+import 'react-native-url-polyfill/auto'
+
 
 const ChatPage = (props) => {
+
+    const configuration = new Configuration({
+        apiKey: REACT_APP_OPENAI_API_KEY,
+    });
+
+
+    const openai = new OpenAIApi(configuration);
 
     var styles = StyleSheet.create({
         container: {
@@ -43,32 +53,58 @@ const ChatPage = (props) => {
     });
 
 
-    const handleChatSubmit = () => {
+    const handleChatSubmit = async () => {
 
         setMessages([...messages, {
             role: 'user',
             content: userInput
         }])
 
+
+
         setUserInput('')
 
-        props.submitPrompt(userInput)
+
+
+        const completion = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {
+                    role: 'user',
+                    content: userInput,
+                }
+            ],
+        }).then((response) => {
+            console.log(response)
+            return String(response.data.choices[0].message.content).trim()
+
+        })
+            .catch((e) => {
+                console.log(e)
+                return String(e);
+            });
+
+
+        setAiResponse(completion)
 
     }
 
 
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: "I'm Orato, your personal language tutor. Let's get started" }
+        { role: 'assistant', content: "I'm Orato, your personal language tutor. Let's get started." }
     ])
 
     const [userInput, setUserInput] = useState('')
+    const [aiResponse, setAiResponse] = useState(false)
 
     useEffect(() => {
 
-        setMessages([...messages, {
-            role: 'assistant',
-            content: aiResponse
-        }])
+        if (aiResponse) {
+            setMessages([...messages, {
+                role: 'assistant',
+                content: aiResponse
+            }])
+        }
 
     }, [aiResponse])
 
